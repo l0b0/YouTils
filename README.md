@@ -2,7 +2,7 @@
 
 ## YouTube channel RSS feed bookmarklet
 
-Use this on a YouTube page to go to the RSS feed of the channel you’re currently on. Works on video pages and the channel page itself.
+Use this on a YouTube page to **go to the RSS feed of the channel you’re currently on.** Works on video pages and the channel page itself.
 
 ```javascript
 javascript:(function () {

@@ -6,30 +6,29 @@ Use this on a YouTube page to **go to the RSS feed of the channel you’re curre
 
 ```javascript
 javascript:(function () {
-    var redirected;
-    Array.prototype.slice.call(document.getElementsByTagName('link')).forEach(function (element) {
-        if (element.getAttribute('type') === 'application/rss+xml') {
-            location.href = element.getAttribute('href');
-            redirected = true;
+    var newLocation = function () {
+        var url;
+        Array.prototype.slice.call(document.getElementsByTagName('link')).forEach(function (element) {
+            if (element.getAttribute('type') === 'application/rss+xml') {
+                console.log('Found direct feed link');
+                url = element.getAttribute('href');
+            }
+        });
+        if (!url) {
+            Array.prototype.slice.call(document.getElementsByTagName('meta')).forEach(function (element) {
+                if (element.getAttribute('itemprop') === 'channelId') {
+                    console.log('Found channel ID');
+                    url = 'https://www.youtube.com/feeds/videos.xml?channel_id=' + element.getAttribute('content');
+                }
+            });
         }
-    });
-    if (redirected) {
-        console.log('Found direct feed link');
-        return;
+        return url;
+    }();
+    if (newLocation === undefined) {
+        console.log('Could not find a channel RSS feed from ' + location.href);
+    } else {
+        location.href = newLocation;
     }
-
-    Array.prototype.slice.call(document.getElementsByTagName('meta')).forEach(function (element) {
-        if (element.getAttribute('itemprop') === 'channelId') {
-            location.href = 'https://www.youtube.com/feeds/videos.xml?channel_id=' + element.getAttribute('content');
-            redirected = true;
-        }
-    });
-    if (redirected) {
-        console.log('Found channel ID');
-        return;
-    }
-
-    console.log('Could not find a channel RSS feed from ' + location.href);
 })();
 ```
 

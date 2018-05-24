@@ -1,31 +1,33 @@
-# YouTube channel web feed bookmarklet
+# YouTube channel/user web feed bookmarklet
 
-Use this on a YouTube page to **go to the RSS feed of the channel you’re currently on.** Works on video pages and the channel page itself.
+Use this on a YouTube page to **go to the RSS feed of the channel/user you’re currently on.** Currently works for user, channel and video pages. 
 
 ```javascript
 javascript:(function () {
-    var newLocation = function () {
-        var url;
+    var channelId = function () {
+        if (
+            window.hasOwnProperty('ytInitialPlayerResponse') &&
+            window['ytInitialPlayerResponse'] !== null &&
+            window['ytInitialPlayerResponse'].hasOwnProperty('videoDetails') &&
+            window['ytInitialPlayerResponse']['videoDetails'].hasOwnProperty('channelId')
+        ) {
+            console.log('Found channel in ytInitialPlayerResponse');
+            return window['ytInitialPlayerResponse']['videoDetails']['channelId'];
+        }
+
+        var id;
         Array.prototype.slice.call(document.getElementsByTagName('link')).forEach(function (element) {
-            if (element.getAttribute('type') === 'application/rss+xml') {
-                console.log('Found direct feed link');
-                url = element.getAttribute('href');
+            if (element.getAttribute('rel') === 'canonical') {
+                console.log('Found channel link');
+                id = element.getAttribute('href').substr(32);
             }
         });
-        if (!url) {
-            Array.prototype.slice.call(document.getElementsByTagName('meta')).forEach(function (element) {
-                if (element.getAttribute('itemprop') === 'channelId') {
-                    console.log('Found channel ID');
-                    url = 'https://www.youtube.com/feeds/videos.xml?channel_id=' + element.getAttribute('content');
-                }
-            });
-        }
-        return url;
+        return id;
     }();
-    if (newLocation === undefined) {
-        console.log('Could not find a channel RSS feed from ' + location.href);
+    if (channelId === undefined) {
+        console.log('Could not find a channel ID feed at ' + location.href);
     } else {
-        location.href = newLocation;
+        location.href = 'https://www.youtube.com/feeds/videos.xml?channel_id=' + channelId;
     }
 })();
 ```

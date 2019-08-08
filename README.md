@@ -1,5 +1,7 @@
 # YouTube channel/user web feed bookmarklet
 
+[This project has moved to GitLab](https://gitlab.com/victor-engmark/YouTube-channel-web-feed-bookmarklet) - any updates will be pushed there.
+
 Use this on a YouTube page to **go to the RSS feed of the channel/user you’re currently on.** Currently works for user, channel and video pages. 
 
 ```javascript
